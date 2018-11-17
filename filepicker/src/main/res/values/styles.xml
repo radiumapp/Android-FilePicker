@@ -17,6 +17,13 @@
         <item name="tabGravity">fill</item>
         <item name="tabMaxWidth">0dp</item>
     </style>
+
+    <style name="PickerNoTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@color/colorPrimary</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabMaxWidth">0dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
     
     <style name="SmoothCheckBoxStyle">
         <item name="color_checked">@color/checkbox_color</item>

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.models.sort.SortingTypes;
+import droidninja.filepicker.utils.MediaPlayerManager;
 import droidninja.filepicker.utils.Orientation;
 import java.util.List;
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -29,10 +30,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
   public static final int RC_PHOTO_PICKER_PERM = 123;
   public static final int RC_FILE_PICKER_PERM = 321;
+  public static final int RC_AUDIO_PICKER_PERM = 231;
   private static final int CUSTOM_REQUEST_CODE = 532;
   private int MAX_ATTACHMENT_COUNT = 10;
   private ArrayList<String> photoPaths = new ArrayList<>();
   private ArrayList<String> docPaths = new ArrayList<>();
+  private ArrayList<String> audioPaths = new ArrayList<>();
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -47,6 +50,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
       @Override
       public void onClick(View view) {
         pickDocClicked();
+      }
+    });
+    findViewById(R.id.pick_audio).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        pickAudioClicked();
       }
     });
   }
@@ -73,6 +82,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
   }
 
+  @AfterPermissionGranted(RC_AUDIO_PICKER_PERM)
+  public void pickAudioClicked() {
+    if (EasyPermissions.hasPermissions(this, FilePickerConst.PERMISSIONS_FILE_PICKER)) {
+      onPickAudio();
+    } else {
+      // Ask for one permission
+      EasyPermissions.requestPermissions(this, getString(R.string.rationale_audio_picker),
+              RC_AUDIO_PICKER_PERM, FilePickerConst.PERMISSIONS_FILE_PICKER);
+    }
+  }
+
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
@@ -80,6 +100,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (resultCode == Activity.RESULT_OK && data != null) {
           photoPaths = new ArrayList<>();
           photoPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
+        }
+        break;
+
+      case FilePickerConst.REQUEST_CODE_AUDIO:
+        MediaPlayerManager.getInstance().stop();
+
+        if (resultCode == Activity.RESULT_OK && data != null) {
+          audioPaths = new ArrayList<>();
+          audioPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_AUDIO));
         }
         break;
 
@@ -91,14 +120,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         break;
     }
 
-    addThemToView(photoPaths, docPaths);
+    addThemToView(photoPaths, docPaths , audioPaths);
   }
 
-  private void addThemToView(ArrayList<String> imagePaths, ArrayList<String> docPaths) {
+  private void addThemToView(ArrayList<String> imagePaths, ArrayList<String> docPaths,ArrayList<String> audioPaths) {
     ArrayList<String> filePaths = new ArrayList<>();
+
     if (imagePaths != null) filePaths.addAll(imagePaths);
 
     if (docPaths != null) filePaths.addAll(docPaths);
+    if (audioPaths != null) filePaths.addAll(audioPaths);
 
     RecyclerView recyclerView = findViewById(R.id.recyclerview);
     if (recyclerView != null) {
@@ -160,6 +191,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
           .sortDocumentsBy(SortingTypes.name)
           .withOrientation(Orientation.UNSPECIFIED)
           .pickFile(this);
+    }
+  }
+
+  public void onPickAudio() {
+    String[] audio = { ".mp3","m4a",".ogg" };
+    if ((docPaths.size() + photoPaths.size()) + audioPaths.size() == MAX_ATTACHMENT_COUNT) {
+      Toast.makeText(this, "Cannot select more than " + MAX_ATTACHMENT_COUNT + " items",
+              Toast.LENGTH_SHORT).show();
+    } else {
+      FilePickerBuilder.Companion.getInstance()
+              .setMaxCount(5)
+              .enableSelectAll(false)
+              .setSelectedFiles(audioPaths)
+              .setActivityTheme(R.style.FilePickerTheme)
+              .setActivityTitle("Pilih audio")
+              .enableDocSupport(false)
+              .addFileSupport("Audio", audio)
+              .sortDocumentsBy(SortingTypes.name)
+              .pickAudio(this);
     }
   }
 

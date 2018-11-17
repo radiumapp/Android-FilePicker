@@ -31,14 +31,19 @@
             />
 
         <Button
+            android:id="@+id/pick_audio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick Audio"
+            />
+
+        <Button
             android:id="@+id/open_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Open Fragment Activity"
             android:onClick="onOpenFragmentClicked"
             />
-
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"

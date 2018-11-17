@@ -19,10 +19,11 @@ object PickerManager {
 
     val selectedPhotos: ArrayList<String> = ArrayList()
     val selectedFiles: ArrayList<String> = ArrayList()
+    val selectedAudio: ArrayList<String> = ArrayList()
 
     private val fileTypes: LinkedHashSet<FileType> = LinkedHashSet()
 
-    var theme : Int = R.style.LibAppTheme
+    var theme: Int = R.style.LibAppTheme
 
     var title: String? = null
 
@@ -45,7 +46,7 @@ object PickerManager {
     var providerAuthorities: String? = null
 
     val currentCount: Int
-        get() = selectedPhotos.size + selectedFiles.size
+        get() = selectedPhotos.size + selectedFiles.size + selectedAudio.size
 
     fun setMaxCount(count: Int) {
         reset()
@@ -60,6 +61,8 @@ object PickerManager {
         if (path != null && shouldAdd()) {
             if (!selectedPhotos.contains(path) && type == FilePickerConst.FILE_TYPE_MEDIA) {
                 selectedPhotos.add(path)
+            } else if (!selectedAudio.contains(path) && type == FilePickerConst.FILE_TYPE_AUDIO) {
+                selectedAudio.add(path)
             } else if (!selectedFiles.contains(path) && type == FilePickerConst.FILE_TYPE_DOCUMENT) {
                 selectedFiles.add(path)
             } else {
@@ -77,7 +80,10 @@ object PickerManager {
     fun remove(path: String, type: Int) {
         if (type == FilePickerConst.FILE_TYPE_MEDIA && selectedPhotos.contains(path)) {
             selectedPhotos.remove(path)
-        } else if (type == FilePickerConst.FILE_TYPE_DOCUMENT) {
+        } else if (type == FilePickerConst.FILE_TYPE_AUDIO){
+            selectedAudio.remove(path)
+        }
+        else if (type == FilePickerConst.FILE_TYPE_DOCUMENT) {
             selectedFiles.remove(path)
         }
     }
@@ -104,6 +110,7 @@ object PickerManager {
     fun clearSelections() {
         selectedPhotos.clear()
         selectedFiles.clear()
+        selectedAudio.clear()
     }
 
     fun deleteMedia(paths: ArrayList<String>) {
