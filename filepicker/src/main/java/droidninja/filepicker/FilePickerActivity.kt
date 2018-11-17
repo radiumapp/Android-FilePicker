@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.ActionBar
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import droidninja.filepicker.fragments.DocFragment
-import droidninja.filepicker.fragments.DocPickerFragment
-import droidninja.filepicker.fragments.MediaPickerFragment
-import droidninja.filepicker.fragments.PhotoPickerFragmentListener
+import droidninja.filepicker.fragments.*
 import droidninja.filepicker.utils.FragmentUtil
 import java.util.ArrayList
 
-class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener, DocFragment.DocFragmentListener, DocPickerFragment.DocPickerFragmentListener, MediaPickerFragment.MediaPickerFragmentListener {
+class FilePickerActivity : BaseFilePickerActivity(),
+        PhotoPickerFragmentListener, MediaPickerFragment.MediaPickerFragmentListener,
+        DocFragment.DocFragmentListener, DocPickerFragment.DocPickerFragmentListener,
+        AudioFragment.AudioFragmentListener, AudioPickerFragment.AudioPickerFragmentListener {
+
     private var type: Int = 0
 
     @SuppressLint("MissingSuperCall")
@@ -36,10 +36,10 @@ class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener
                 }
 
                 PickerManager.clearSelections()
-                if (type == FilePickerConst.MEDIA_PICKER) {
-                    PickerManager.add(selectedPaths, FilePickerConst.FILE_TYPE_MEDIA)
-                } else {
-                    PickerManager.add(selectedPaths, FilePickerConst.FILE_TYPE_DOCUMENT)
+                when (type) {
+                    FilePickerConst.MEDIA_PICKER -> PickerManager.add(selectedPaths, FilePickerConst.FILE_TYPE_MEDIA)
+                    FilePickerConst.AUDIO_PICKER -> PickerManager.add(selectedPaths, FilePickerConst.FILE_TYPE_AUDIO)
+                    else -> PickerManager.add(selectedPaths, FilePickerConst.FILE_TYPE_DOCUMENT)
                 }
             }
 
@@ -59,24 +59,30 @@ class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener
             } else if (!TextUtils.isEmpty(PickerManager.title)) {
                 actionBar.title = PickerManager.title
             } else {
-                if (type == FilePickerConst.MEDIA_PICKER) {
-                    actionBar.setTitle(R.string.select_photo_text)
-                } else {
-                    actionBar.setTitle(R.string.select_doc_text)
+                when (type) {
+                    FilePickerConst.MEDIA_PICKER -> actionBar.setTitle(R.string.select_photo_text)
+                    FilePickerConst.AUDIO_PICKER -> actionBar.setTitle(R.string.select_audio_text)
+                    else -> actionBar.setTitle(R.string.select_doc_text)
                 }
             }
         }
     }
 
     private fun openSpecificFragment(type: Int) {
-        if (type == FilePickerConst.MEDIA_PICKER) {
-            val photoFragment = MediaPickerFragment.newInstance()
-            FragmentUtil.replaceFragment(this, R.id.container, photoFragment)
-        } else {
-            if (PickerManager.isDocSupport) PickerManager.addDocTypes()
-
-            val photoFragment = DocPickerFragment.newInstance()
-            FragmentUtil.replaceFragment(this, R.id.container, photoFragment)
+        when (type) {
+            FilePickerConst.MEDIA_PICKER -> {
+                val photoFragment = MediaPickerFragment.newInstance()
+                FragmentUtil.replaceFragment(this, R.id.container, photoFragment)
+            }
+            FilePickerConst.AUDIO_PICKER -> {
+                val audioFragment = AudioPickerFragment.newInstance()
+                FragmentUtil.replaceFragment(this, R.id.container, audioFragment)
+            }
+            else -> {
+                if (PickerManager.isDocSupport) PickerManager.addDocTypes()
+                val photoFragment = DocPickerFragment.newInstance()
+                FragmentUtil.replaceFragment(this, R.id.container, photoFragment)
+            }
         }
     }
 
@@ -92,10 +98,10 @@ class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val i = item.itemId
         if (i == R.id.action_done) {
-            if (type == FilePickerConst.MEDIA_PICKER) {
-                returnData(PickerManager.selectedPhotos)
-            } else {
-                returnData(PickerManager.selectedFiles)
+            when (type) {
+                FilePickerConst.MEDIA_PICKER -> returnData(PickerManager.selectedPhotos)
+                FilePickerConst.AUDIO_PICKER -> returnData(PickerManager.selectedAudio)
+                else -> returnData(PickerManager.selectedFiles)
             }
 
             return true
@@ -117,10 +123,10 @@ class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             FilePickerConst.REQUEST_CODE_MEDIA_DETAIL -> if (resultCode == Activity.RESULT_OK) {
-                if (type == FilePickerConst.MEDIA_PICKER) {
-                    returnData(PickerManager.selectedPhotos)
-                } else {
-                    returnData(PickerManager.selectedFiles)
+                when (type) {
+                    FilePickerConst.MEDIA_PICKER -> returnData(PickerManager.selectedPhotos)
+                    FilePickerConst.AUDIO_PICKER -> returnData(PickerManager.selectedAudio)
+                    else -> returnData(PickerManager.selectedFiles)
                 }
             } else {
                 setToolbarTitle(PickerManager.currentCount)
@@ -130,10 +136,10 @@ class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener
 
     private fun returnData(paths: ArrayList<String>) {
         val intent = Intent()
-        if (type == FilePickerConst.MEDIA_PICKER) {
-            intent.putStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA, paths)
-        } else {
-            intent.putStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS, paths)
+        when (type) {
+            FilePickerConst.MEDIA_PICKER -> intent.putStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA, paths)
+            FilePickerConst.AUDIO_PICKER -> intent.putStringArrayListExtra(FilePickerConst.KEY_SELECTED_AUDIO, paths)
+            else -> intent.putStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS, paths)
         }
 
         setResult(Activity.RESULT_OK, intent)
@@ -146,15 +152,12 @@ class FilePickerActivity : BaseFilePickerActivity(), PhotoPickerFragmentListener
 
         if (PickerManager.getMaxCount() == 1 && currentCount == 1) {
             returnData(
-                    if (type == FilePickerConst.MEDIA_PICKER)
-                        PickerManager.selectedPhotos
-                    else
-                        PickerManager.selectedFiles)
+                    when (type) {
+                        FilePickerConst.MEDIA_PICKER -> PickerManager.selectedPhotos
+                        FilePickerConst.AUDIO_PICKER -> PickerManager.selectedPhotos
+                        else -> PickerManager.selectedFiles
+                    })
         }
     }
 
-    companion object {
-
-        private val TAG = FilePickerActivity::class.java.simpleName
-    }
 }

@@ -127,6 +127,11 @@ class FilePickerBuilder {
         start(context, requestCode)
     }
 
+    fun pickAudio(context: Activity) {
+        mPickerOptionsBundle.putInt(FilePickerConst.EXTRA_PICKER_TYPE, FilePickerConst.AUDIO_PICKER)
+        start(context, FilePickerConst.REQUEST_CODE_AUDIO)
+    }
+
     fun pickPhoto(context: Fragment, requestCode: Int) {
         mPickerOptionsBundle.putInt(FilePickerConst.EXTRA_PICKER_TYPE, FilePickerConst.MEDIA_PICKER)
         start(context, requestCode)

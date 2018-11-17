@@ -8,6 +8,8 @@ import android.Manifest
 object FilePickerConst {
     const val REQUEST_CODE_PHOTO = 233
     const val REQUEST_CODE_DOC = 234
+    const val REQUEST_CODE_AUDIO = 235
+
 
     const val REQUEST_CODE_MEDIA_DETAIL = 235
     const val REQUEST_CODE_PERMISSION = 988
@@ -17,9 +19,12 @@ object FilePickerConst {
 
     const val MEDIA_PICKER = 0x11
     const val DOC_PICKER = 0x12
+    const val AUDIO_PICKER = 0x13
+
 
     const val KEY_SELECTED_MEDIA = "SELECTED_PHOTOS"
     const val KEY_SELECTED_DOCS = "SELECTED_DOCS"
+    const val KEY_SELECTED_AUDIO = "SELECTED_AUDIO"
 
     const val EXTRA_PICKER_TYPE = "EXTRA_PICKER_TYPE"
     const val EXTRA_SHOW_GIF = "SHOW_GIF"
@@ -30,6 +35,7 @@ object FilePickerConst {
 
     const val FILE_TYPE_MEDIA = 1
     const val FILE_TYPE_DOCUMENT = 2
+    const val FILE_TYPE_AUDIO = 3
 
     const val MEDIA_TYPE_IMAGE = 1
     const val MEDIA_TYPE_VIDEO = 3

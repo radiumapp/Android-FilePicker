@@ -1,6 +1,5 @@
 package droidninja.filepicker.models;
 
-import droidninja.filepicker.FilePickerConst;
 import droidninja.filepicker.utils.FilePickerUtils;
 import java.io.File;
 
