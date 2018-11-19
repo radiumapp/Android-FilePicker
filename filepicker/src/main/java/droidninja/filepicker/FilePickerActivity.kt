@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import droidninja.filepicker.fragments.*
 import droidninja.filepicker.utils.FragmentUtil
+import droidninja.filepicker.utils.MediaPlayerManager
 import java.util.ArrayList
 
 class FilePickerActivity : BaseFilePickerActivity(),
@@ -125,7 +126,10 @@ class FilePickerActivity : BaseFilePickerActivity(),
             FilePickerConst.REQUEST_CODE_MEDIA_DETAIL -> if (resultCode == Activity.RESULT_OK) {
                 when (type) {
                     FilePickerConst.MEDIA_PICKER -> returnData(PickerManager.selectedPhotos)
-                    FilePickerConst.AUDIO_PICKER -> returnData(PickerManager.selectedAudio)
+                    FilePickerConst.AUDIO_PICKER -> {
+                        MediaPlayerManager.getInstance().stop()
+                        returnData(PickerManager.selectedAudio)
+                    }
                     else -> returnData(PickerManager.selectedFiles)
                 }
             } else {
