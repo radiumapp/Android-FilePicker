@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 
-import java.util.ArrayList
-
 import droidninja.filepicker.PickerManager
 import droidninja.filepicker.R
 import droidninja.filepicker.adapters.SectionsPagerAdapter
@@ -82,6 +80,7 @@ class DocPickerFragment : BaseFragment() {
                     PickerManager.sortingType.comparator,
                     object : FileMapResultCallback {
                         override fun onResultCallback(files: Map<FileType, List<Document>>) {
+                            if(!isAdded) return
                             progressBar?.visibility = View.GONE
                             setDataOnFragments(files)
                         }
