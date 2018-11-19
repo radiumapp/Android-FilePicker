@@ -115,6 +115,7 @@ class FilePickerActivity : BaseFilePickerActivity(),
 
     override fun onBackPressed() {
         super.onBackPressed()
+        MediaPlayerManager.getInstance().stop()
         PickerManager.reset()
         setResult(Activity.RESULT_CANCELED)
         finish()
