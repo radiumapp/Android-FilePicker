@@ -79,6 +79,7 @@ class DocPickerFragment : BaseFragment() {
                     PickerManager.sortingType.comparator,
                     object : FileMapResultCallback {
                         override fun onResultCallback(files: Map<FileType, List<Document>>) {
+                            if(!isAdded) return
                             progressBar?.visibility = View.GONE
                             setDataOnFragments(files)
                         }
