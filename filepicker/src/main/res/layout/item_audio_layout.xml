@@ -38,7 +38,6 @@
         android:layout_toRightOf="@+id/file_iv"
         tools:text="1.2MB" />
 
-
     <droidninja.filepicker.views.SmoothCheckBox
         android:id="@+id/checkbox"
         style="@style/SmoothCheckBoxStyle"

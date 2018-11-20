@@ -1,6 +1,7 @@
 package droidninja.filepicker.adapters
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.net.Uri
 import android.text.format.Formatter
 import android.view.LayoutInflater
@@ -42,11 +43,22 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
         holder.fileNameTextView.text = document.title
         holder.fileSizeTextView.text = Formatter.formatShortFileSize(context, java.lang.Long.parseLong(document.size))
 
-        holder.itemView.setOnClickListener { onItemClicked(document, holder) }
+        holder.fileNameTextView.setOnClickListener { onItemClicked(document, holder) }
+        holder.fileSizeTextView.setOnClickListener { onItemClicked(document, holder) }
 
         //in some cases, it will prevent unwanted situations
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.setOnClickListener { onItemClicked(document, holder) }
+
+        holder.imageView.setOnClickListener {
+            if (MediaPlayerManager.getInstance().isPlaying) {
+                MediaPlayerManager.getInstance().stop()
+                holder.imageView.setImageResource(R.drawable.ic_play)
+            } else {
+                MediaPlayerManager.getInstance().play(context, Uri.parse(document.path))
+                holder.imageView.setImageResource(R.drawable.ic_stop)
+            }
+        }
 
         //if true, your checkbox will be selected, else unselected
         holder.checkBox.isChecked = isSelected(document)
@@ -71,14 +83,10 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
                 PickerManager.remove(document.path, FilePickerConst.FILE_TYPE_AUDIO)
                 holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
                 holder.checkBox.visibility = View.GONE
-                holder.imageView.setImageResource(R.drawable.ic_play)
-                MediaPlayerManager.getInstance().stop()
             } else if (PickerManager.shouldAdd()) {
                 PickerManager.add(document.path, FilePickerConst.FILE_TYPE_AUDIO)
                 holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
                 holder.checkBox.visibility = View.VISIBLE
-                holder.imageView.setImageResource(R.drawable.ic_stop)
-                MediaPlayerManager.getInstance().play(context, Uri.parse(document.path))
             }
         }
         mListener?.onItemSelected()
