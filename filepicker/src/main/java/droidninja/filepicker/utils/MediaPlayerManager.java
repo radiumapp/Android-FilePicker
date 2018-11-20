@@ -54,5 +54,12 @@ public class MediaPlayerManager {
         }
     }
 
+    public Boolean isPlaying() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.isPlaying();
+        } else {
+            return false;
+        }
+    }
 
 }
