@@ -22,11 +22,14 @@ import droidninja.filepicker.utils.FilePickerUtils
 import android.provider.BaseColumns._ID
 import android.provider.MediaStore.MediaColumns.DATA
 import java.util.function.Predicate
+import android.media.MediaMetadataRetriever
+import android.net.Uri
+
 
 /**
  * Created by droidNinja on 01/08/16.
  */
-class DocScannerTask(val contentResolver: ContentResolver, private val fileTypes: List<FileType>, private val comparator: Comparator<Document>?,
+class DocScannerTask(val context: Context?, val contentResolver: ContentResolver, private val fileTypes: List<FileType>, private val comparator: Comparator<Document>?,
                      private val resultCallback: FileMapResultCallback?) : AsyncTask<Void, Void, Map<FileType, List<Document>>>() {
 
     val DOC_PROJECTION = arrayOf(MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.DATA, MediaStore.Files.FileColumns.MIME_TYPE, MediaStore.Files.FileColumns.SIZE, MediaStore.Files.FileColumns.DATE_ADDED, MediaStore.Files.FileColumns.TITLE)
@@ -97,6 +100,19 @@ class DocScannerTask(val contentResolver: ContentResolver, private val fileTypes
                     }
 
                     document.size = data.getString(data.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE))
+
+                    if (mimeType != null) {
+                        if (mimeType.contains("audio/mpeg") || mimeType.contains("audio/ogg")
+                                || mimeType.contains("audio/m4a") || mimeType.contains("audio/aac")) {
+
+                            val uri = Uri.parse(document.path)
+                            val mmr = MediaMetadataRetriever()
+                            mmr.setDataSource(context, uri)
+                            val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                            val millSecond = Integer.parseInt(durationStr) / 1000
+                            document.duration = millSecond
+                        }
+                    }
 
                     if (!documents.contains(document)) documents.add(document)
                 }

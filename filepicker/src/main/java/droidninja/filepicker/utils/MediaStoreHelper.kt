@@ -1,6 +1,7 @@
 package droidninja.filepicker.utils
 
 import android.content.ContentResolver
+import android.content.Context
 import android.os.Bundle
 
 import java.util.Comparator
@@ -19,10 +20,10 @@ object MediaStoreHelper {
         PhotoScannerTask(contentResolver,args,resultCallback).execute()
     }
 
-    fun getDocs(contentResolver: ContentResolver,
+    fun getDocs(context: Context?,contentResolver: ContentResolver,
                 fileTypes: List<FileType>,
                 comparator: Comparator<Document>,
                 fileResultCallback: FileMapResultCallback) {
-        DocScannerTask(contentResolver, fileTypes, comparator, fileResultCallback).execute()
+        DocScannerTask(context,contentResolver, fileTypes, comparator, fileResultCallback).execute()
     }
 }

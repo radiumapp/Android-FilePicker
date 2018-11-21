@@ -12,39 +12,52 @@
         android:layout_margin="10dp"
         android:src="@drawable/ic_play" />
 
-    <TextView
-        android:id="@+id/file_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/file_iv"
-        android:layout_toStartOf="@+id/checkbox"
-        android:layout_toLeftOf="@+id/checkbox"
-        android:layout_toEndOf="@+id/file_iv"
-        android:layout_toRightOf="@+id/file_iv"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/file_name_textSize"
-        tools:text="PPDF_112121.pdf"
+    <RelativeLayout
+        android:id="@+id/layoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:layout_toRightOf="@id/file_iv">
 
-        />
+        <TextView
+            android:id="@+id/file_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/checkbox"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/file_name_textSize"
+            tools:text="PPDF_112121.pdf" />
 
-    <TextView
-        android:id="@+id/file_size_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/file_name_tv"
-        android:layout_toEndOf="@+id/file_iv"
-        android:layout_toRightOf="@+id/file_iv"
-        tools:text="1.2MB" />
+        <TextView
+            android:id="@+id/file_size_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/file_name_tv"
+            tools:text="1.2MB" />
 
-    <droidninja.filepicker.views.SmoothCheckBox
-        android:id="@+id/checkbox"
-        style="@style/SmoothCheckBoxStyle"
-        android:layout_width="@dimen/file_item_checkbox_size"
-        android:layout_height="@dimen/file_item_checkbox_size"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="20dp" />
+        <TextView
+            android:id="@+id/file_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/file_name_tv"
+            android:layout_toRightOf="@+id/file_size_tv"
+            tools:text=" - 4:33" />
+
+        <droidninja.filepicker.views.SmoothCheckBox
+            android:id="@+id/checkbox"
+            style="@style/SmoothCheckBoxStyle"
+            android:layout_width="@dimen/file_item_checkbox_size"
+            android:layout_height="@dimen/file_item_checkbox_size"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="20dp" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -89,11 +89,15 @@ class FilePickerActivity : BaseFilePickerActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.picker_menu, menu)
-        val menuItem = menu.findItem(R.id.action_done)
-        if (menuItem != null) {
-            menuItem.isVisible = PickerManager.getMaxCount() != 1
-        }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (menu != null) {
+            invalidateOptionsMenu()
+            menu.findItem(R.id.action_done).isVisible = PickerManager.currentCount != 0
+        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

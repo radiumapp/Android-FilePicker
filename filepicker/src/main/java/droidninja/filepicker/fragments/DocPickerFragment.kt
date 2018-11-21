@@ -75,7 +75,7 @@ class DocPickerFragment : BaseFragment() {
 
     private fun setData() {
         context?.let {
-            MediaStoreHelper.getDocs(it.contentResolver,
+            MediaStoreHelper.getDocs(activity?.applicationContext,it.contentResolver,
                     PickerManager.getFileTypes(),
                     PickerManager.sortingType.comparator,
                     object : FileMapResultCallback {
