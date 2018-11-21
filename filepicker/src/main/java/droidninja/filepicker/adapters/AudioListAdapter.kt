@@ -39,7 +39,10 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
         holder.fileSizeTextView.text = Formatter.formatShortFileSize(context, java.lang.Long.parseLong(document.size))
 
         if (document.duration != null) {
+            holder.fileTimeTextView.visibility = View.VISIBLE
             holder.fileTimeTextView.text = " - " + String.format("%02d:%02d", document.duration / 60, document.duration % 60)
+        } else {
+            holder.fileTimeTextView.visibility = View.INVISIBLE
         }
 
         holder.layoutContent.setOnClickListener { onItemClicked(document, holder) }
@@ -63,7 +66,7 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
 
         holder.itemView.setBackgroundResource(
                 if (isSelected(document)) R.color.bg_gray else android.R.color.white)
-        holder.checkBox.visibility = if (isSelected(document)) View.VISIBLE else View.GONE
+        holder.checkBox.visibility = if (isSelected(document)) View.VISIBLE else View.INVISIBLE
 
         holder.checkBox.setOnCheckedChangeListener(object : SmoothCheckBox.OnCheckedChangeListener {
             override fun onCheckedChanged(checkBox: SmoothCheckBox, isChecked: Boolean) {
@@ -83,7 +86,7 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
                 if (holder.checkBox.isChecked) {
                     PickerManager.remove(document.path, FilePickerConst.FILE_TYPE_AUDIO)
                     holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
-                    holder.checkBox.visibility = View.GONE
+                    holder.checkBox.visibility = View.INVISIBLE
                 } else if (PickerManager.shouldAdd()) {
                     PickerManager.add(document.path, FilePickerConst.FILE_TYPE_AUDIO)
                     holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
