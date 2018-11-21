@@ -74,12 +74,12 @@ class AudioPickerFragment : BaseFragment() {
 
     private fun setData() {
         context?.let {
-            MediaStoreHelper.getDocs(it.contentResolver,
+            MediaStoreHelper.getDocs(activity?.applicationContext, it.contentResolver,
                     PickerManager.getFileTypes(),
                     PickerManager.sortingType.comparator,
                     object : FileMapResultCallback {
                         override fun onResultCallback(files: Map<FileType, List<Document>>) {
-                            if(!isAdded) return
+                            if (!isAdded) return
                             progressBar?.visibility = View.GONE
                             setDataOnFragments(files)
                         }

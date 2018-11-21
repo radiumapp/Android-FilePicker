@@ -1,16 +1,12 @@
 package droidninja.filepicker.adapters
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.net.Uri
 import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import droidninja.filepicker.FilePickerConst
 import droidninja.filepicker.PickerManager
@@ -19,7 +15,6 @@ import droidninja.filepicker.models.Document
 import droidninja.filepicker.views.SmoothCheckBox
 import java.util.ArrayList
 import droidninja.filepicker.utils.MediaPlayerManager
-
 
 class AudioListAdapter(private val context: Context, private var mFilteredList: List<Document>, selectedPaths: List<String>,
                        private val mListener: FileAdapterListener?) : SelectableAdapter<AudioListAdapter.AudioViewHolder,
@@ -43,8 +38,11 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
         holder.fileNameTextView.text = document.title
         holder.fileSizeTextView.text = Formatter.formatShortFileSize(context, java.lang.Long.parseLong(document.size))
 
-        holder.fileNameTextView.setOnClickListener { onItemClicked(document, holder) }
-        holder.fileSizeTextView.setOnClickListener { onItemClicked(document, holder) }
+        if (document.duration != null) {
+            holder.fileTimeTextView.text = " - " + String.format("%02d:%02d", document.duration / 60, document.duration % 60)
+        }
+
+        holder.layoutContent.setOnClickListener { onItemClicked(document, holder) }
 
         //in some cases, it will prevent unwanted situations
         holder.checkBox.setOnCheckedChangeListener(null)
@@ -76,20 +74,24 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
     }
 
     private fun onItemClicked(document: Document, holder: AudioViewHolder) {
-        if (PickerManager.getMaxCount() == 1) {
-            PickerManager.add(document.path, FilePickerConst.FILE_TYPE_AUDIO)
+        if (java.lang.Long.parseLong(document.size) > 10000000) {
+            Toast.makeText(context, "" + context.resources.getString(R.string.out_size), Toast.LENGTH_SHORT).show()
         } else {
-            if (holder.checkBox.isChecked) {
-                PickerManager.remove(document.path, FilePickerConst.FILE_TYPE_AUDIO)
-                holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
-                holder.checkBox.visibility = View.GONE
-            } else if (PickerManager.shouldAdd()) {
+            if (PickerManager.getMaxCount() == 1) {
                 PickerManager.add(document.path, FilePickerConst.FILE_TYPE_AUDIO)
-                holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
-                holder.checkBox.visibility = View.VISIBLE
+            } else {
+                if (holder.checkBox.isChecked) {
+                    PickerManager.remove(document.path, FilePickerConst.FILE_TYPE_AUDIO)
+                    holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
+                    holder.checkBox.visibility = View.GONE
+                } else if (PickerManager.shouldAdd()) {
+                    PickerManager.add(document.path, FilePickerConst.FILE_TYPE_AUDIO)
+                    holder.checkBox.setChecked(!holder.checkBox.isChecked, true)
+                    holder.checkBox.visibility = View.VISIBLE
+                }
             }
+            mListener?.onItemSelected()
         }
-        mListener?.onItemSelected()
     }
 
     override fun getFilter(): Filter {
@@ -129,16 +131,20 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
     }
 
     class AudioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var layoutContent: RelativeLayout
         var checkBox: SmoothCheckBox
         var imageView: ImageView
         var fileNameTextView: TextView
         var fileSizeTextView: TextView
+        var fileTimeTextView: TextView
 
         init {
+            layoutContent = itemView.findViewById(R.id.layoutContent)
             checkBox = itemView.findViewById(R.id.checkbox)
             imageView = itemView.findViewById(R.id.file_iv)
             fileNameTextView = itemView.findViewById(R.id.file_name_tv)
             fileSizeTextView = itemView.findViewById(R.id.file_size_tv)
+            fileTimeTextView = itemView.findViewById(R.id.file_time_tv)
         }
     }
 
