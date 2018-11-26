@@ -9,7 +9,6 @@ import android.text.TextUtils
 
 import java.io.File
 import java.util.ArrayList
-import java.util.Collections
 import java.util.Comparator
 import java.util.HashMap
 
@@ -17,13 +16,12 @@ import droidninja.filepicker.PickerManager
 import droidninja.filepicker.cursors.loadercallbacks.FileMapResultCallback
 import droidninja.filepicker.models.Document
 import droidninja.filepicker.models.FileType
-import droidninja.filepicker.utils.FilePickerUtils
 
 import android.provider.BaseColumns._ID
 import android.provider.MediaStore.MediaColumns.DATA
-import java.util.function.Predicate
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.Build
 
 
 /**
@@ -105,12 +103,23 @@ class DocScannerTask(val context: Context?, val contentResolver: ContentResolver
                         if (mimeType.contains("audio/mpeg") || mimeType.contains("audio/ogg")
                                 || mimeType.contains("audio/m4a") || mimeType.contains("audio/aac")) {
 
-                            val uri = Uri.parse(document.path)
-                            val mmr = MediaMetadataRetriever()
-                            mmr.setDataSource(context, uri)
-                            val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                            val millSecond = Integer.parseInt(durationStr) / 1000
-                            document.duration = millSecond
+                            try {
+                                val uri = Uri.parse(document.path)
+                                val mmr = MediaMetadataRetriever()
+
+                                if (Build.VERSION.SDK_INT >= 14)
+                                    mmr.setDataSource(document.path, hashMapOf<String, String>())
+                                else
+                                    mmr.setDataSource(context, uri)
+
+                                val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                                val millSecond = Integer.parseInt(durationStr) / 1000
+                                document.duration = millSecond
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+
                         }
                     }
 
