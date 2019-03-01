@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import java.util.ArrayList;
 
 import droidninja.filepicker.FilePickerBuilder;
@@ -104,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         break;
 
       case FilePickerConst.REQUEST_CODE_AUDIO:
-        MediaPlayerManager.getInstance().stop();
+        MediaPlayerManager.Companion.getInstance().stop();
 
         if (resultCode == Activity.RESULT_OK && data != null) {
           audioPaths = new ArrayList<>();

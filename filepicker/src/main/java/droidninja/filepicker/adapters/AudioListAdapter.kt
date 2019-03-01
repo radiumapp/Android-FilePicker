@@ -52,7 +52,7 @@ class AudioListAdapter(private val context: Context, private var mFilteredList: 
         holder.checkBox.setOnClickListener { onItemClicked(document, holder) }
 
         holder.imageView.setOnClickListener {
-            if (MediaPlayerManager.getInstance().isPlaying) {
+            if (MediaPlayerManager.getInstance().isPlaying == true) {
                 MediaPlayerManager.getInstance().stop()
                 holder.imageView.setImageResource(R.drawable.ic_play)
             } else {
