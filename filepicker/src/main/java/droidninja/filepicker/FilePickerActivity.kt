@@ -101,10 +101,12 @@ class FilePickerActivity : BaseFilePickerActivity(),
         if (i == R.id.action_done) {
             when (type) {
                 FilePickerConst.MEDIA_PICKER -> returnData(PickerManager.selectedPhotos)
-                FilePickerConst.AUDIO_PICKER -> returnData(PickerManager.selectedAudio)
+                FilePickerConst.AUDIO_PICKER -> {
+                    MediaPlayerManager.getInstance().stop()
+                    returnData(PickerManager.selectedAudio)
+                }
                 else -> returnData(PickerManager.selectedFiles)
             }
-
             return true
         } else if (i == android.R.id.home) {
             onBackPressed()
