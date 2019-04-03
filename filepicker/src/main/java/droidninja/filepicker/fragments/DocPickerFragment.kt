@@ -43,7 +43,7 @@ class DocPickerFragment : BaseFragment() {
         if (context is DocPickerFragmentListener) {
             mListener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement DocPickerFragmentListener")
+            throw RuntimeException("$context must implement DocPickerFragmentListener")
         }
     }
 
