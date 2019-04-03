@@ -2,16 +2,11 @@ package droidninja.filepicker.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.view.*
+import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.SearchView
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import droidninja.filepicker.FilePickerConst
 import droidninja.filepicker.PickerManager
 import droidninja.filepicker.R
@@ -38,13 +33,13 @@ class DocFragment : BaseFragment(), FileAdapterListener {
         return inflater.inflate(R.layout.fragment_photo_picker, container, false)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is DocFragmentListener) {
             mListener = context
         } else {
             throw RuntimeException(
-                    context?.toString() + " must implement PhotoPickerFragmentListener")
+                    context.toString() + " must implement PhotoPickerFragmentListener")
         }
     }
 
@@ -112,9 +107,9 @@ class DocFragment : BaseFragment(), FileAdapterListener {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.doc_picker_menu, menu)
-        selectAllItem = menu?.findItem(R.id.action_select)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.doc_picker_menu, menu)
+        selectAllItem = menu.findItem(R.id.action_select)
         if (PickerManager.hasSelectAll()) {
             selectAllItem?.isVisible = true
             onItemSelected()
@@ -122,7 +117,7 @@ class DocFragment : BaseFragment(), FileAdapterListener {
             selectAllItem?.isVisible = false
         }
 
-        val search = menu?.findItem(R.id.search)
+        val search = menu.findItem(R.id.search)
         val searchView = search?.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -139,8 +134,8 @@ class DocFragment : BaseFragment(), FileAdapterListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val itemId = item?.itemId
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
         if (itemId == R.id.action_select) {
             fileListAdapter?.let { adapter->
                 selectAllItem?.let { menuItem ->
