@@ -5,26 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.view.*
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.OrientationHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
-
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-
-import java.io.IOException
-import java.util.ArrayList
-import java.util.Comparator
-
 import droidninja.filepicker.FilePickerConst
 import droidninja.filepicker.PickerManager
 import droidninja.filepicker.R
@@ -36,6 +25,8 @@ import droidninja.filepicker.models.PhotoDirectory
 import droidninja.filepicker.utils.AndroidLifecycleUtils
 import droidninja.filepicker.utils.ImageCaptureManager
 import droidninja.filepicker.utils.MediaStoreHelper
+import java.io.IOException
+import java.util.*
 
 
 class MediaDetailPickerFragment : BaseFragment(), FileAdapterListener {
@@ -57,12 +48,12 @@ class MediaDetailPickerFragment : BaseFragment(), FileAdapterListener {
         return inflater.inflate(R.layout.fragment_photo_picker, container, false)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is PhotoPickerFragmentListener) {
             mListener = context
         } else {
-            throw RuntimeException(context?.toString() + " must implement PhotoPickerFragmentListener")
+            throw RuntimeException("$context must implement PhotoPickerFragmentListener")
         }
     }
 
@@ -207,15 +198,15 @@ class MediaDetailPickerFragment : BaseFragment(), FileAdapterListener {
         mGlideRequestManager.resumeRequests()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.select_menu, menu)
-        selectAllItem = menu?.findItem(R.id.action_select)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.select_menu, menu)
+        selectAllItem = menu.findItem(R.id.action_select)
         onItemSelected()
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val itemId = item?.itemId
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
         if (itemId == R.id.action_select) {
             photoGridAdapter?.let { adapter ->
                 adapter.selectAll()
