@@ -19,25 +19,24 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
     lateinit var recyclerView: RecyclerView
     lateinit var emptyView: TextView
 
-    private var mListener: AudioFragmentListener? =null
+    private var mListener: AudioFragmentListener? = null
     private var selectAllItem: MenuItem? = null
     private var audioListAdapter: AudioListAdapter? = null
 
     val fileType: FileType?
-    get() = arguments?.getParcelable(BaseFragment.FILE_TYPE)
+        get() = arguments?.getParcelable(BaseFragment.FILE_TYPE)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_photo_picker, container, false)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is AudioFragmentListener) {
             mListener = context
         } else {
-            throw RuntimeException(
-                    context?.toString() + " must implement AudioPickerFragmentListener")
+            throw RuntimeException("$context must implement AudioPickerFragmentListener")
         }
     }
 
@@ -53,7 +52,7 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
 
     override fun onItemSelected() {
         mListener?.onItemSelected()
-        audioListAdapter?.let { adapter->
+        audioListAdapter?.let { adapter ->
             selectAllItem?.let { menuItem ->
                 if (adapter.itemCount == adapter.selectedItemCount) {
                     menuItem.setIcon(R.drawable.ic_select_all)
@@ -63,7 +62,7 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
         }
     }
 
-    interface AudioFragmentListener{
+    interface AudioFragmentListener {
         fun onItemSelected()
     }
 
@@ -88,7 +87,7 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
                 context?.let {
                     audioListAdapter = recyclerView.adapter as? AudioListAdapter
                     if (audioListAdapter == null) {
-                        audioListAdapter =AudioListAdapter(it, dirs, PickerManager.selectedFiles,
+                        audioListAdapter = AudioListAdapter(it, dirs, PickerManager.selectedFiles,
                                 this)
 
                         recyclerView.adapter = audioListAdapter
@@ -105,9 +104,9 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.doc_picker_menu, menu)
-        selectAllItem = menu?.findItem(R.id.action_select)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.doc_picker_menu, menu)
+        selectAllItem = menu.findItem(R.id.action_select)
         if (PickerManager.hasSelectAll()) {
             selectAllItem?.isVisible = true
             onItemSelected()
@@ -115,7 +114,7 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
             selectAllItem?.isVisible = false
         }
 
-        val search = menu?.findItem(R.id.search)
+        val search = menu.findItem(R.id.search)
         val searchView = search?.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -132,10 +131,10 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val itemId = item?.itemId
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
         if (itemId == R.id.action_select) {
-            audioListAdapter?.let { adapter->
+            audioListAdapter?.let { adapter ->
                 selectAllItem?.let { menuItem ->
                     if (menuItem.isChecked) {
                         adapter.clearSelection()
@@ -169,7 +168,6 @@ class AudioFragment : BaseFragment(), FileAdapterListener {
             return audioPickerFragment
         }
     }
-
 
 
 }
